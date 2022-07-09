@@ -226,22 +226,22 @@ void windDirCalc() {
     pinMode(WIND_DIR_PIN, INPUT);  
     vin = analogRead(WIND_DIR_PIN);
 //table for the wind direction
-    if (vin < 150) windDir = "Eastsoutheast";
-    else if (vin < 300) windDir = "East";
-    else if (vin < 400) windDir = "Southsoutheast";
-    else if (vin < 600) windDir = "Southeast";
-    else if (vin < 900) windDir = "Southsouthwest";
-    else if (vin < 1100) windDir = "South";
-    else if (vin < 1500) windDir = "Northnortheast";
-    else if (vin < 1700) windDir = "Northeast";
-    else if (vin < 2250) windDir = "Westsouthwest";
-    else if (vin < 2350) windDir = "Southwest ";
-    else if (vin < 2700) windDir = "Northnorthwest";
-    else if (vin < 3000) windDir = "North";
-    else if (vin < 3200) windDir = "Westnorthwest";
-    else if (vin < 3400) windDir = "Northwest";
-    else if (vin < 4000) windDir = "West";
-    else windDir = "West";
+    if (vin < 150) windDir = "Westnorthwest";
+    else if (vin < 300) windDir = "West";
+    else if (vin < 400) windDir = "Northnorthwest";
+    else if (vin < 600) windDir = "Northwest";
+    else if (vin < 900) windDir = "Northnortheast";
+    else if (vin < 1100) windDir = "North";
+    else if (vin < 1500) windDir = "Southsouthwest";
+    else if (vin < 1700) windDir = "Southwest";
+    else if (vin < 2250) windDir = "Eastnortheast";
+    else if (vin < 2350) windDir = "Northeast";
+    else if (vin < 2700) windDir = "Southsoutheast";
+    else if (vin < 3000) windDir = "South";
+    else if (vin < 3200) windDir = "Eastsoutheast";
+    else if (vin < 3400) windDir = "Southeast";
+    else if (vin < 4000) windDir = "East";
+    else windDir = "East";
 }
 
 //print out data
