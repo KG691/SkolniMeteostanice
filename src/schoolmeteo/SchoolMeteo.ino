@@ -24,7 +24,6 @@ Adafruit_BMP085 bmp;
 //Variables used in the speed of wind calculations
 
 volatile unsigned long timeSinceLastTick = 0;
-volatile unsigned long lastTick = 0;    
 float windSpeed;
 
 // Variables for the direction of the wind
@@ -38,10 +37,8 @@ String windDir = "";
 volatile long rainTickList[NO_RAIN_SAMPLES];
 volatile int rainTickIndex = 0;
 volatile int rainTicks = 0;
-int rainLastDay = 0;
 int rainLastHour = 0;
 int rainLastHourStart = 0;
-int rainLastDayStart = 0;
 long secsClock = 0;
 
 //MQTT Setup, use if you want MQQT
@@ -53,7 +50,7 @@ long secsClock = 0;
 //  #define mqttWndSpd "GJK/wndspd"
 //  #define mqttWndDir "GJK/wnddir"
 //  #define mqttPrss "GJK/prss"
-  #define mqttRnfll "GJK/rnfll"
+//  #define mqttRnfll "GJK/rnfll"
  
 
 //Wi-fi connection
@@ -79,7 +76,7 @@ void setup() {
   //Setup the wind speed sensor
   pinMode(WIND_SPD_PIN, INPUT);
     
-  //Setap the rainfall sesnor setup     
+  //Setup the rainfall sensor    
   pinMode(RAIN_PIN, INPUT);
   attachInterrupt(digitalPinToInterrupt(RAIN_PIN), rainTick, FALLING);
       
@@ -88,13 +85,13 @@ void setup() {
   dht.begin();
   bmp.begin();
 
-  // COnnect to wifi selected above
+  // Connect to wifi selected above
   
   Serial.print("Connecting to ");
   Serial.print(wifi_name);
   WiFi.begin(wifi_name, wifi_pass);   
         
-  //Trying to connect until succession
+  //Trying to connect until success
     
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -180,7 +177,7 @@ void Read_Sensors_Data() {
   if (millis() - outLoopTimer >= 2000) {
     outLoopTimer = millis();
         
-    // Windspeed calculation in mph. Time 1,6 for km/h
+    // Windspeed calculation in mph. Times 1,6 for km/h
         
     if (timeSinceLastTick != 0) windSpeed = 1000.0/timeSinceLastTick;
 
@@ -189,8 +186,7 @@ void Read_Sensors_Data() {
     windDirCalc();       
      
     rainLastHour = 0;
-    rainLastDay = 0;
-    
+
     if (rainTicks > 0) {
 
       int i = rainTickIndex-1;
@@ -246,11 +242,11 @@ void windDirCalc() {
 
 //print out data
   void printdata(){
-   Serial.print("Rychlost větru: "); Serial.print(windSpeed*2.4*1,6); Serial.println(" km/h");     
-   Serial.print("Směr větru: ");  Serial.print("  "); Serial.println(windDir);   
-   Serial.print("Srážky za poslední hodinu: "); Serial.println(float(rainLastHour) * 0.011, 3);
-   Serial.print("Vhkost vzduchu: "); Serial.print(hum); Serial.println(" %");
-   Serial.print("Teplota: "); Serial.print(temp); Serial.println(" C");
+   Serial.print("Wind speed: "); Serial.print(windSpeed*2.4*1,6); Serial.println(" km/h");     
+   Serial.print("Wind direction: ");  Serial.print("  "); Serial.println(windDir);   
+   Serial.print("Rainfall last hour: "); Serial.println(float(rainLastHour) * 0.011, 3);
+   Serial.print("Humidity: "); Serial.print(hum); Serial.println(" %");
+   Serial.print("Temperature: "); Serial.print(temp); Serial.println(" C");
   }
 
   void wifi_server(){
@@ -262,7 +258,7 @@ void windDirCalc() {
        if (client.available()) {                
         char c = client.read();             
         if (c == '\n') {                     
-          if (currentLine.length() == 0) {     //we can change the loog of the site in html
+          if (currentLine.length() == 0) {     //we can change the look of the site in html
             client.print("<html><head><title> GJK weather station </title>");
             client.print("<meta http-equiv'content-type' content='text/html; charset=utf-8'>");
             client.print("<meta http-equiv='refresh' content='1'></head>");
