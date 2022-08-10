@@ -2,3 +2,4 @@ https://www.arduinolibraries.info/libraries/adafruit-bmp085-library
 https://www.arduinolibraries.info/libraries/adafruit-bus-io
 https://www.arduinolibraries.info/libraries/dht-sensor-library
 https://www.arduinolibraries.info/libraries/adafruit-unified-sensor
+https://www.arduino.cc/reference/en/libraries/pubsubclient/
