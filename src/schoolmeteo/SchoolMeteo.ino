@@ -1,5 +1,5 @@
 //libraries
-//#include <PubSubClient.h> //library for MQTT
+#include <PubSubClient.h> //library for MQTT
 #include <WiFi.h>  
 #include <Wire.h>
 #include <DHT.h>
@@ -43,21 +43,21 @@ int rainLastHourStart = 0;
 long secsClock = 0;
 
 //MQTT Setup, use if you want MQQT
-//#define mqtt_server "192.168.0.59/"
-//  WiFiClient espClient;
-//  PubSubClient client(espClient);
-//  #define mqttHum "GJK/hum"
-//  #define mqttTemp "GJK/temp"
-//  #define mqttWndSpd "GJK/wndspd"
-//  #define mqttWndDir "GJK/wnddir"
-//  #define mqttPrss "GJK/prss"
-//  #define mqttRnfll "GJK/rnfll"
+#define mqtt_server "192.168.0.59/"
+  WiFiClient espClient;
+  PubSubClient client(espClient);
+  #define mqttHum "GJK/hum"
+  #define mqttTemp "GJK/temp"
+  #define mqttWndSpd "GJK/wndspd"
+  #define mqttWndDir "GJK/wnddir"
+  #define mqttPrss "GJK/prss"
+  #define mqttRnfll "GJK/rnfll"
  
 
 //Wi-fi connection
     
-const char* wifi_name = "UPC1306669_EXT";    //Switch for the wanted wi-fi
-const char* wifi_pass = "5ywUubdjuepw";  //Switch for the password for the wi-fi
+const char* wifi_name = "schoolwifi";    //Switch for the wanted wi-fi
+const char* wifi_pass = "schoolwifipassword";  //Switch for the password for the wi-fi
 WiFiServer server(80);
 
 //Server variables
@@ -147,8 +147,8 @@ void setup() {
 void loop() {
     Read_Sensors_Data();
     printdata();
-    wifi_server();
-//    publish_mqtt ();
+    wifi_server();     //use wifi_server for posting the website in local network
+//    publish_mqtt (); //use publish_mqtt for running mqtt
     delay (2000);
 }
 
@@ -301,45 +301,45 @@ void windDirCalc() {
  
  
     // Loop until we're reconnected
-//  void reconnect() {
-//    int counter = 0;
-//    while (!client.connected()) {
-//     if (counter==5){
-//       ESP.restart();
-//      }
-//     counter+=1;
- //     Serial.print("Connecting to MQTT...");
+  void reconnect() {
+    int counter = 0;
+    while (!client.connected()) {
+     if (counter==5){
+       ESP.restart();
+      }
+     counter+=1;
+      Serial.print("Connecting to MQTT...");
       // Attempt to connect
    
-//      if (client.connect("GJKmeteostanice")) {
-//      Serial.println("connected");
-//      } else {
-//        Serial.print("failed, rc=");
-//        Serial.print(client.state());
-//        Serial.println(" try again in 5 seconds");
+      if (client.connect("GJKmeteostanice")) {
+      Serial.println("connected");
+      } else {
+        Serial.print("failed, rc=");
+        Serial.print(client.state());
+        Serial.println(" try again in 5 seconds");
        // Wait 5 seconds before retrying
-//        delay(5000);
-//      }
-//    }
-//  }
+        delay(5000);
+      }
+    }
+  }
  
-//  void publish_mqtt() 
-//  {
-//   if (!client.connected()){
-//     reconnect();
-//   }
+  void publish_mqtt() 
+  {
+   if (!client.connected()){
+     reconnect();
+   }
    
  
-//    client.publish(mqttHum, String(hum).c_str(),true);
-//    client.publish(mqttTemp, String(temp).c_str(),true);
-//    client.publish(mqttWndSpd, String(windSpeed*2.4).c_str(),true);
-//    client.publish(mqttWndDir, String(windDir).c_str(),true);
-//    client.publish(mqttPrss, String(pressure_value).c_str(),true);
-//    client.publish(mqttRnfll, String(rainLastHour * 0.011, 3).c_str(),true);
+    client.publish(mqttHum, String(hum).c_str(),true);
+    client.publish(mqttTemp, String(temp).c_str(),true);
+    client.publish(mqttWndSpd, String(windSpeed*2.4).c_str(),true);
+    client.publish(mqttWndDir, String(windDir).c_str(),true);
+    client.publish(mqttPrss, String(pressure_value).c_str(),true);
+    client.publish(mqttRnfll, String(rainLastHour * 0.011, 3).c_str(),true);
  
  
-//    delay(5000);
-//    }
+    delay(5000);
+    }
 
 
 
