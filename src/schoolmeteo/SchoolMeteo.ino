@@ -3,6 +3,7 @@
 #include <WiFi.h>  
 #include <Wire.h>
 #include <DHT.h>
+#include <GyverHTU21D.h>
 #include <Adafruit_BMP085.h>
 
 //defining pins
@@ -14,9 +15,7 @@
 #define WIND_DIR_PIN 35
 
 // Init of thermometer
-
-DHT dht(DHTPIN, DHTTYPE);
-
+GyverHTU21D htu;
 // Init of barometric pressure sensor
 
 Adafruit_BMP085 bmp;
@@ -56,8 +55,8 @@ long secsClock = 0;
 
 //Wi-fi connection
     
-const char* wifi_name = "schoolwifi";    //Switch for the wanted wi-fi
-const char* wifi_pass = "schoolwifipassword";  //Switch for the password for the wi-fi
+const char* wifi_name = "UPC1306669_EXT";    //Switch for the wanted wi-fi
+const char* wifi_pass = "5ywUubdjuepw";  //Switch for the password for the wi-fi
 WiFiServer server(80);
 
 //Server variables
@@ -73,17 +72,17 @@ void setup() {
   delay(25);
   Serial.println("\nWeather station powered on.\n");
       
-  
+  if (!htu.begin()) Serial.println(F("HTU21D error"));
+    bmp.begin();
+
   //Setup the wind speed sensor
   pinMode(WIND_SPD_PIN, INPUT);
-    
+  attachInterrupt(digitalPinToInterrupt(WIND_SPD_PIN), windTick, FALLING);  
   //Setup the rainfall sensor     
   pinMode(RAIN_PIN, INPUT);
   attachInterrupt(digitalPinToInterrupt(RAIN_PIN), rainTick, FALLING);
       
-  for (int i = 0; i < NO_RAIN_SAMPLES; i++) rainTickList[i] = 0;   
-  
-  dht.begin();
+  for (int i = 0; i < NO_RAIN_SAMPLES; i++) rainTickList[i] = 0;  
   bmp.begin();
 
   // Connect to wifi selected above
@@ -149,6 +148,16 @@ void loop() {
     printdata();
     wifi_server();     //use wifi_server for posting the website in local network
 //    publish_mqtt (); //use publish_mqtt for running mqtt
+    htu.requestTemperature();
+    delay(100);                                                
+    if (htu.readTemperature()) {              
+      Serial.print("Teplota: "); Serial.print(htu.getTemperature()); Serial.println(" °C");
+  }
+    htu.requestHumidity();                   
+    delay(100);                              
+    if (htu.readHumidity()) {                
+    Serial.print("Vlhkost vzduchu: "); Serial.print(htu.getHumidity()); Serial.println(" %");
+  }
     delay (2000);
 }
 
@@ -157,9 +166,6 @@ void Read_Sensors_Data() {
   // convert the reading to a char array
   pressure.toCharArray(pressure_value, 4);
   // Read the temperature and humidity
-  
-  hum = dht.readHumidity(); 
-  temp = dht.readTemperature();
   
   // Read Wind Speed, Rain Fall and Wind Direction
 
@@ -246,8 +252,8 @@ void windDirCalc() {
    Serial.print("Rychlost větru: "); Serial.print(windSpeed*2.4*1,6); Serial.println(" km/h");     
    Serial.print("Směr větru: ");  Serial.print("  "); Serial.println(windDir);   
    Serial.print("Srážky za poslední hodinu: "); Serial.println(float(rainLastHour) * 0.011, 3);
-   Serial.print("Vhkost vzduchu: "); Serial.print(hum); Serial.println(" %");
-   Serial.print("Teplota: "); Serial.print(temp); Serial.println(" C");
+   Serial.print("Tlak:");Serial.print(pressure_value); Serial.println("hpa");
+   
   }
 
   void wifi_server(){
@@ -265,10 +271,10 @@ void windDirCalc() {
             client.print("<meta http-equiv='refresh' content='1'></head>");
             client.print("<body bgcolor=\"#E6E6FA\"><h1 style=\"text-align: center; color: blue\"> ESP32 Weather Station </h1>");
             client.print("<p style=\"text-align: center; font-size:150% \">Temperature: ");
-            client.print(temp);
+            client.print(htu.getTemperature());
             client.print("&deg;C<br/>");
             client.print("Humidity: ");
-            client.print(hum);
+            client.print(htu.getHumidity());
             client.print("%<br/>");
             client.print("Pressure: ");
             client.print(pressure_value);
@@ -340,10 +346,3 @@ void windDirCalc() {
  
     delay(5000);
     }
-
-
-
-
-     
-
-      
