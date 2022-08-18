@@ -71,6 +71,9 @@ void setup() {
   Serial.begin(115200);
   delay(25);
   Serial.println("\nWeather station powered on.\n");
+
+  //setup_mqtt(); //use setup_mqtt() for mqtt and setup_wifi() for wi-fi server
+  setup_wifi();
       
   if (!htu.begin()) Serial.println(F("HTU21D error"));
     bmp.begin();
@@ -85,7 +88,9 @@ void setup() {
   for (int i = 0; i < NO_RAIN_SAMPLES; i++) rainTickList[i] = 0;  
   bmp.begin();
 
-  // Connect to wifi selected above
+}
+void setup_wifi(){
+ // Connect to wifi selected above
   
   Serial.print("Connecting to ");
   Serial.print(wifi_name);
@@ -105,41 +110,34 @@ void setup() {
   Serial.println("Type the above IP address into a browser search bar");
   
   server.begin();                   //Starts the adress
-    
-//setup for the mqtt 
-//    Serial.println("");
-//    Serial.println("WiFi connected");  
-//    Serial.println("IP address: ");
-//    Serial.println(WiFi.localIP());
-    //end Wifi connect
  
-//    client.setServer(mqtt_server, 1883);
-  
- // begin Wifi connect
-//    Serial.print("Connecting to ");
-//    Serial.println(wifi_name);
-//    WiFi.mode(WIFI_STA);
-//    WiFi.disconnect();
-//    delay(2000);
-//    WiFi.begin(wifi_name,wifi_pass );
-    
-//   while (WiFi.status() != WL_CONNECTED) {
-//     delay(500);
-//     Serial.print(".");
-//    }
- 
-//    Serial.println("");
-//    Serial.println("WiFi connected");  
-//    Serial.println("IP address: ");
-//    Serial.println(WiFi.localIP());
-    //end Wifi connect
- 
- //   client.setServer(mqtt_server, 1883);
-  
-
-
-
 }
+
+void setup_mqtt() {
+   // begin Wifi connect
+    Serial.print("Connecting to ");
+    Serial.println(wifi_name);
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();
+    delay(2000);
+    WiFi.begin(wifi_name,wifi_pass );
+    
+   while (WiFi.status() != WL_CONNECTED) {
+     delay(500);
+     Serial.print(".");
+    }
+ 
+    Serial.println("");
+    Serial.println("WiFi connected");  
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+    //end Wifi connect
+ 
+    client.setServer(mqtt_server, 1883);
+  
+ }
+
+
 
 //loop function
 
