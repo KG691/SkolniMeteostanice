@@ -1,15 +1,11 @@
-//libraries
+//used libraries
 #include <PubSubClient.h> //library for MQTT
 #include <WiFi.h>  
 #include <Wire.h>
-#include <DHT.h>
 #include <GyverHTU21D.h>
 #include <Adafruit_BMP085.h>
 
 //defining pins
-
-#define DHTPIN 15 
-#define DHTTYPE DHT22
 #define WIND_SPD_PIN 14
 #define RAIN_PIN     25
 #define WIND_DIR_PIN 35
@@ -41,7 +37,7 @@ int rainLastHour = 0;
 int rainLastHourStart = 0;
 long secsClock = 0;
 
-//MQTT Setup, use if you want MQQT
+//Setup for the MQTT server
 #define mqtt_server "192.168.0.59/"
   WiFiClient espClient;
   PubSubClient client(espClient);
@@ -55,8 +51,8 @@ long secsClock = 0;
 
 //Wi-fi connection
     
-const char* wifi_name = "UPC1306669_EXT";    //Switch for the wanted wi-fi
-const char* wifi_pass = "5ywUubdjuepw";  //Switch for the password for the wi-fi
+const char* wifi_name = "wi-fi školy";    //Switch for the wanted wi-fi
+const char* wifi_pass = "heslonawi-fi";  //Switch for the password for the wi-fi
 WiFiServer server(80);
 
 //Server variables
@@ -72,8 +68,8 @@ void setup() {
   delay(25);
   Serial.println("\nWeather station powered on.\n");
 
-  //setup_mqtt(); //use setup_mqtt() for mqtt and setup_wifi() for wi-fi server
-  setup_wifi();
+  //setup_mqtt();                     //use setup_mqtt() for mqtt and setup_wifi() for wi-fi server
+  setup_wifi();                       //and setup_wifi() for wi-fi server
       
   if (!htu.begin()) Serial.println(F("HTU21D error"));
     bmp.begin();
@@ -106,7 +102,7 @@ void setup_wifi(){
   Serial.println("");
   Serial.println("Connection Successful");
   Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());   //Prints out the web server adress
+  Serial.println(WiFi.localIP());       //Prints out the web server adress, type it into a browser search bar
   Serial.println("Type the above IP address into a browser search bar");
   
   server.begin();                   //Starts the adress
